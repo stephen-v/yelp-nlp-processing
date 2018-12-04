@@ -5,6 +5,7 @@ author:stephen
 import json
 import pymysql
 import configuration
+import db_factory
 
 
 def parse_dataset(path):
@@ -29,28 +30,25 @@ def parse_dataset(path):
 def save_db(data, db_config):
     """
     save to db
+    :param data:
     :param db_config:
     :return:
     """
-    conn = pymysql.connect(host=db_config.host,
-                           user=db_config.user,
-                           password=db_config.pwd,
-                           db=db_config.db,
-                           charset='utf8mb4',
-                           cursorclass=pymysql.cursors.DictCursor,
-                           port=int(db_config.port)
-                           )
+    conn = db_factory.create_conn()
     c1 = conn.cursor()
-    failed_data = 0
+    failed_data, processed_data = (0, 0)
     for i in data:
         try:
-            c1.execute('insert into Restaurants(business_id ,name,categories,review_count) values (%s,%s,%s,%d)', i)
+            c1.execute('insert into Restaurants(business_id ,name,categories,review_count) values (%s,%s,%s,%s)', i)
             conn.commit()
+            processed_data = processed_data + 1
         except Exception as Argument:
             print(Argument, i)
             failed_data = failed_data + 1
             continue
-    print('insert Restaurant success!  &d records but failed &d' & (len(data), failed_data))
+        if processed_data % 1000 == 0:
+            print('processed data %d' % processed_data)
+    print('insert Restaurant success!  %d records but failed %d' % (len(data), failed_data))
 
 
 if __name__ == "__main__":

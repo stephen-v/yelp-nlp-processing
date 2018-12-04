@@ -18,6 +18,7 @@ def get_configs():
     db = conf.get('mysql', 'db')
     yelp_dir = conf.get('yelp_path', 'yelp_dir')
     business_filename = conf.get('yelp_path', 'business_filename')
-    Config = namedtuple('Config', 'host port user pwd yelp_dir business_filename db')
-    config = Config(host, port, user, pwd, yelp_dir, business_filename, db)
+    reviews_filename = conf.get('yelp_path', 'reviews_filename')
+    Config = namedtuple('Config', 'host port user pwd yelp_dir business_filename db reviews_filename')
+    config = Config(host, port, user, pwd, yelp_dir, business_filename, db, reviews_filename)
     return config
