@@ -37,3 +37,33 @@ create index restaurant_reviews_business_id_index
 	on yelp_db.restaurant_reviews (business_id)
 ;
 ```
+
+3、Triples
+```SQL
+create table triples
+(
+	review_id int null,
+	subject nvarchar(200) null,
+	relation nvarchar(200) null,
+	object nvarchar(200) null,
+	remarks nvarchar(200) null
+);
+
+create index triples__index_2_review
+	on triples (review_id);
+
+create index triples__index_object
+	on triples (object);
+
+create index triples__index_subject
+	on triples (subject);
+
+create unique index triples_review_id_uindex
+	on triples (review_id);
+
+alter table triples
+	add constraint triples_pk
+		primary key (review_id);
+
+
+```
