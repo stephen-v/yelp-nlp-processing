@@ -7,7 +7,6 @@ import pymysql
 import configuration
 import db_factory
 
-
 def parse_dataset(path):
     """
     parse data from json

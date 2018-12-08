@@ -2,6 +2,7 @@ import json
 import pymysql
 import configuration
 import db_factory
+import configuration
 
 
 def get_keys():
