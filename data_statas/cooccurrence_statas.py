@@ -1,5 +1,4 @@
-import itertools
-import operator
+import numpy as np
 from collections import OrderedDict
 
 from pycorenlp import *
@@ -26,9 +25,14 @@ def extract_cooccurrence_word(s):
         nn = [i['word'] for i in words if
               i['pos'] == 'NN' or i['pos'] == 'NNS' or i['pos'] == 'NNPS' or i['pos'] == 'NNP']
         nns = nns + nn
-
-    nns_pairs = [i for i in itertools.product(nns, nns)]
-    return nns_pairs
+    nns_len = len(nns)
+    nns_pairs = ['%s-%s' % (i, j) for i in nns for j in nns]
+    nns_pairs_triu = np.triu(np.array(nns_pairs).reshape(nns_len, nns_len))
+    nns_pairs_unique = []
+    for i in nns_pairs_triu:
+        nns_pairs_unique = nns_pairs_unique + i.tolist()
+    nns_pairs_unique = [i for i in nns_pairs_unique if len(i) > 0 and i.split('-')[0] != i.split('-')[1]]
+    return nns_pairs_unique
 
 
 if __name__ == "__main__":
@@ -43,16 +47,25 @@ if __name__ == "__main__":
                 continue
             s = str(record['text'])
             # s = 'I love this place! My fiance And I go here atleast once a week. The portions are huge! Food is amazing. I love their carne asada. They have great lunch specials... Leticia is super nice and cares about what you think of her restaurant. You have to try their cheese enchiladas too the sauce is different And amazing!!!'
-            pairs = extract_cooccurrence_word(s)
-            key = ['%s-%s' % (i[0], i[1]) for i in pairs if i[0] != i[1]]
+            key = extract_cooccurrence_word(s)
             lines = lines + 1
             for i in key:
                 val = 1
+                split_i = i.split('-')
+                reverse_i = '%s-%s' % (split_i[1], split_i[0])
+                # a-b
                 if i in word_pairs:
                     val = word_pairs[i]
                     val = val + 1
-                word_pairs[i] = val
-            if lines % 10000 == 0:
+                    word_pairs[i] = val
+                # b-a
+                elif reverse_i in word_pairs:
+                    val = word_pairs[reverse_i]
+                    val = val + 1
+                    word_pairs[reverse_i] = val
+                else:
+                    word_pairs[i] = val
+            if lines % 1000 == 0:
                 sorted_by_value = OrderedDict(sorted(word_pairs.items(), key=lambda t: t[1], reverse=True))
                 with open('../data/wordpairs_%s.txt' % str(lines), 'w+', encoding='utf-8') as file_object:
                     for i in sorted_by_value:
