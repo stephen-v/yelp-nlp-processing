@@ -66,8 +66,13 @@ if __name__ == "__main__":
                 else:
                     word_pairs[i] = val
             if lines % 1000 == 0:
-                sorted_by_value = OrderedDict(sorted(word_pairs.items(), key=lambda t: t[1], reverse=True))
-                with open('../data/wordpairs_%s.txt' % str(lines), 'w+', encoding='utf-8') as file_object:
-                    for i in sorted_by_value:
-                        file_object.write('%s：%s\n' % (i, sorted_by_value.get(i)))
-                print('save successful :%s.txt' % lines)
+                try:
+                    sorted_by_value = OrderedDict(sorted(word_pairs.items(), key=lambda t: t[1], reverse=True))
+                    with open('../data/wordpairs_%s.txt' % str(lines), 'w+', encoding='utf-8') as file_object:
+                        for i in sorted_by_value:
+                            file_object.write('%s：%s\n' % (i, sorted_by_value.get(i)))
+                    print('save successful :%s.txt' % lines)
+                except Exception as e:
+                    print(e)
+                    continue
+        print('complete...')
