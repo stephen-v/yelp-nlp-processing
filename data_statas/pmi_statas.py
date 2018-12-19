@@ -24,7 +24,7 @@ if __name__ == "__main__":
                 else:
                     words[word2] = 1
                 if len(word_paris) % 10000 == 0:
-                    print(len(word_paris))
+                    print('load %s , but error is %s' % (len(word_paris), error_data))
             except ValueError as e:
                 error_data = error_data + 1
 
@@ -45,6 +45,6 @@ if __name__ == "__main__":
             f.write('%s:%s|%s' % (paris, pmi, count))
         processed_data = processed_data + 1
         if processed_data % 10000 == 0:
-            print('total is %s ,the processed data is %s,the error data is %s' % (
-                word_paris_len, processed_data, error_data))
+            print('total is %s ,the processed data is %s' % (
+                word_paris_len, processed_data))
     print('complete...')
