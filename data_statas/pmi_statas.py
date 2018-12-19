@@ -5,7 +5,7 @@ if __name__ == "__main__":
     word_paris_pmi = {}
     words = {}
     print('start to load data....')
-
+    error_data = 0
     with open('../data/wordpairs_4000.txt', encoding='UTF-8') as f:
         for x in f.readlines():
             try:
@@ -25,8 +25,8 @@ if __name__ == "__main__":
                     words[word2] = 1
                 if len(word_paris) % 10000 == 0:
                     print(len(word_paris))
-            except Exception as e:
-                print(x)
+            except ValueError as e:
+                error_data = error_data + 1
 
     temp = []
     word_paris_len = len(word_paris)
@@ -44,6 +44,7 @@ if __name__ == "__main__":
         with open('../data/wordpairs_pmi.txt', 'a+', encoding='UTF-8') as f:
             f.write('%s:%s|%s' % (paris, pmi, count))
         processed_data = processed_data + 1
-        if processed_data % 1000 == 0:
-            print('total is %s , the processed data is %s' % (word_paris_len, processed_data))
+        if processed_data % 10000 == 0:
+            print('total is %s ,the processed data is %s,the error data is %s' % (
+                word_paris_len, processed_data, error_data))
     print('complete...')
